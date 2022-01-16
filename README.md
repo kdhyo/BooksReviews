@@ -885,7 +885,7 @@ java.lang.annotation
 @interface
 ```
 
-# Chapter 18 중간 점검
+# Chapter 18 중간점검(이제 기본 문법은 거의 다 배웠으니 정리해 봅시다)
 
 ### 01. 참조 자료형(Reference type)과 기본 자료형(Primitive type)의 차이를 정리해 주세요.
 ```
@@ -921,15 +921,20 @@ if는 참과 거짓을 구분하여 처리할 수 있으며, if-else는 if가 �
 
 ### 06. for, do-while, while 를 어떻게 사용하는지 1부터 10까지 더하는 코드를 예를 들어 정리해 주세요.
 ```
+// for문
 int num = 0;
-for (int i = 1; i <= 10; i++)
-    num+=i;
+for (int i = 1; i <= 10; i++) {
+    num += i;
+}
+// do-while문
 int i = 1;
 num = 0;
 do {
     num += i;
     i++;
 } while(i <= 10)
+
+// while문
 i = 1;
 num = 0;
 while (i <= 10) { 
@@ -940,9 +945,9 @@ while (i <= 10) {
 
 ### 07. 학생이라면 지금까지의 자신의 학점이나 등수를, 회사원이라면 지금까지의 고과를 String 배열에 넣고 출력하는 코드를 작성해 주세요.
 ```
-String[] scores = [100,90,80,70,60];
-for (String s:scores) {
-    System.out.println(s);
+String[] scores = [100, 90, 80, 70, 60];
+for (String score : scores) {
+    System.out.println(score);
 }
 ```
 
