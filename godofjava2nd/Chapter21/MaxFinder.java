@@ -1,3 +1,5 @@
+package godofjava2nd.Chapter21;
+
 public class MaxFinder {
 
     public static void main(String[] args) {

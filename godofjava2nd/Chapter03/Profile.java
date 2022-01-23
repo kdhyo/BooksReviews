@@ -1,3 +1,5 @@
+package godofjava2nd.Chapter03;
+
 public class Profile {
     private String name;
     private int age;

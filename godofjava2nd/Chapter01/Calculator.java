@@ -1,3 +1,5 @@
+package godofjava2nd.Chapter01;
+
 public class Calculator {
 
     private Calculator() {

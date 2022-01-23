@@ -1,3 +1,5 @@
+package godofjava2nd.Chapter06;
+
 public class InterestManager {
 
     public static void main(String[] args) {

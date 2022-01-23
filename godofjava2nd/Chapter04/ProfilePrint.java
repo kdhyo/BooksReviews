@@ -1,3 +1,5 @@
+package godofjava2nd.Chapter04;
+
 public class ProfilePrint {
     private byte age;
     private String name;

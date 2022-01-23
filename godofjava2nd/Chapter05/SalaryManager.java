@@ -1,3 +1,5 @@
+package godofjava2nd.Chapter05;
+
 public class SalaryManager {
 
     private static double MONTH_COUNT = 12d;

@@ -1,3 +1,5 @@
+package godofjava2nd.Chapter02;
+
 public class Profile {
     public static void main(String[] args) {
         String name = "Kim Dong Hyo";
