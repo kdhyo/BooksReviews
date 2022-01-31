@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="dDay"></div>
+</body>
+
+</html>
+<script>
+    const dDay = document.querySelector(".dDay");
+
+    function init() {
+        setInterval(() => innerTextDDay(new Date()), 1000);
+    }
+
+    function innerTextDDay(date) {
+        const { day, hours, minutes, seconds } = getChristmas(date);
+        dDay.innerText = `${day}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    function getChristmas(date) {
+        const christmas = new Date(`${date.getFullYear()}, 12, 25`);
+
+        const dateGap = christmas.getTime() - date.getTime();
+        const timeGap = new Date(0, 0, 0, 0, 0, 0, christmas - date);
+
+        return {
+            day: numberToPadStart(getDay(dateGap)),
+            hours: numberToPadStart(timeGap.getHours()),
+            minutes: numberToPadStart(timeGap.getMinutes()),
+            seconds: numberToPadStart(timeGap.getSeconds()),
+        };
+    }
+
+    function getDay(time) {
+        return Math.floor(time / (1000 * 60 * 60 * 24));
+    }
+
+    function numberToPadStart(number) {
+        return String(number).padStart(2, "0");
+    }
+
+    init();
+</script>

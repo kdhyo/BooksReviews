@@ -12,6 +12,7 @@
 ### [- 22.01.28 TIL](#day-08)
 ### [- 22.01.29 TIL](#day-09)
 ### [- 22.01.30 TIL](#day-10)
+### [- 22.01.31 TIL](#day-11)
 
 
 
@@ -584,6 +585,92 @@ Try/Catch 뽑아내기 / 오류 처리도 한 가지 작업이다.(p58-59)
 - 하나의 소프트웨어를 만들 땐 규칙을 정하자.
 - 특별한 팀 or 개인 규칙이 없다면 유명한 '코드 컨벤션'을 활용하자. (ex - 구글, 네이버)
 - 자신의 스타일과 일치하지 않더라도 팀에서 정한 규칙을 따르자.
+
+</br>
+</br>
+
+# 📘 번외 - 더러운 코드를 고치자
+
+## **_Day 11_**
+## TIL(2022.01.31) 
+</br>
+
+### 💩 기존 코드
+```
+const merry = document.querySelector(".js-clock");
+
+function getClock() {
+const christmas = new Date("2021, 12, 25");
+const date = new Date();
+const timeGap = christmas - date;
+
+const xDay = Math.floor(timeGap / (1000 * 60 * 60 * 24));
+const xHours = Math.floor(
+(timeGap - xDay * 1000 * 60 * 60 * 24) / (1000 * 60 * 60)
+);
+const xMinutes = Math.floor((timeGap % (60 * 60 * 1000)) / (60 * 1000));
+const xSeconds = Math.floor((timeGap % (60 * 1000)) / 1000);
+
+const day = String(xDay).padStart(2, "0");
+const hours = String(xHours).padStart(2, "0");
+const minutes = String(xMinutes).padStart(2, "0");
+const seconds = String(xSeconds).padStart(2, "0");
+
+merry.innerText = `${day}d ${hours}h ${minutes}m ${seconds}s`;
+}
+
+getClock();
+setInterval(getClock, 1000);
+```
+
+
+</br>
+
+---
+### 😀 수정한 코드
+```
+const dDay = document.querySelector(".dDay");
+
+function init() {
+    setInterval(() => innerTextDDay(new Date()), 1000);
+}
+
+function innerTextDDay(date) {
+    const { day, hours, minutes, seconds } = getChristmas(date);
+    dDay.innerText = `${day}d ${hours}h ${minutes}m ${seconds}s`;
+}
+
+function getChristmas(date) {
+    const christmas = new Date(`${date.getFullYear()}, 12, 25`);
+
+    const dateGap = christmas.getTime() - date.getTime();
+    const timeGap = new Date(0, 0, 0, 0, 0, 0, christmas - date);
+
+    return {
+        day: numberToPadStart(getDay(dateGap)),
+        hours: numberToPadStart(timeGap.getHours()),
+        minutes: numberToPadStart(timeGap.getMinutes()),
+        seconds: numberToPadStart(timeGap.getSeconds()),
+    };
+}
+
+function getDay(time) {
+    return Math.floor(time / (1000 * 60 * 60 * 24));
+}
+
+function numberToPadStart(number) {
+    return String(number).padStart(2, "0");
+}
+
+init();
+```
+</br>
+
+---
+### 👀 소감 3줄 요약
+- dDay 변수를 저 위치에 두는 게 맞을까?
+- padStart 함수를 한 후에 retusn하는 게 맞을까..? 더 쪼갤 수 있을까?
+- 오버로딩이 없는 게 매우 아쉽다..
 
 </br>
 </br>
