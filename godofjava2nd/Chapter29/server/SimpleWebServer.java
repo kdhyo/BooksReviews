@@ -14,18 +14,20 @@ public class SimpleWebServer {
     }
 
     private void run(int port) {
-        ServerSocket server = null;
-        try {
-            server = new ServerSocket(port);
-            while (true) {
-                Socket socket = server.accept();
-                RequestHandler handler = new RequestHandler(socket);
-                handler.start();
-            }
+        try (ServerSocket server = new ServerSocket(port)) {
+            serverStart(server);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    private void serverStart(ServerSocket server) throws IOException {
+        while (true) {
+            Socket socket = server.accept();
+            RequestHandler handler = new RequestHandler(socket);
+            handler.start();
+        }
     }
 
 }

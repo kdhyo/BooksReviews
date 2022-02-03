@@ -18,15 +18,13 @@ public class ResponseManager {
     }
 
     public void writeResponse() {
-        try {
-            PrintStream response = new PrintStream(socket.getOutputStream());
+        try (PrintStream response = new PrintStream(socket.getOutputStream())) {
             response.println("HTTP/1.1 200 OK");
             response.println("Content-type: text/html");
             response.println();
             setBody(response);
 
             response.flush();
-            response.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

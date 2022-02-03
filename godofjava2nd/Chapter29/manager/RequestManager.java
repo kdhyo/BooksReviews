@@ -17,8 +17,7 @@ public class RequestManager {
     private static final int BUFFER_SIZE = 2048;
 
     public RequestDTO readRequest() {
-        try {
-            InputStream request = new BufferedInputStream(socket.getInputStream());
+        try(InputStream request = new BufferedInputStream(socket.getInputStream())) {
             byte[] receivedBytes = new byte[BUFFER_SIZE];
             request.read(receivedBytes);
             String requestData = new String(receivedBytes).trim();
