@@ -1,4 +1,4 @@
-package godofjava2nd.Chapter29;
+package godofjava2nd.Chapter29.server;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
