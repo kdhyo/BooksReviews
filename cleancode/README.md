@@ -15,6 +15,8 @@
 ### [- 22.01.31 TIL](#day-11)
 ### [- 22.02.01 TIL](#day-12)
 ### [- 22.02.02 TIL](#day-13)
+### [- 22.02.03 TIL](#day-14)
+### [- 22.02.04 TIL](#day-15)
 
 
 
@@ -777,6 +779,59 @@ Checked 예외가 OCP를 위반하고, 캡슐화를 깨며, 의존성이란 비�
 - 예외를 일으키는 메소드를 작성할 땐 예외를 발생시키는 테스트 케이스를 작성하자.
 - Checked 예외보단 unChecked 예외의 장점이 더욱 크다.
 - Checked 예외는 OCP를 위반하고, 캡슐화를 깨고, 의존성 비용이 든다.
+
+</br>
+</br>
+
+
+## **_Day 14_**
+## TIL(2022.02.03) 
+</br>
+
+## 😎 Chapter 4 & 5 & 6 Quiz  
+
+### 1. Is better to write code that does not need comments.
+- <span style="color:red">**True**</span>
+- ~~False~~
+
+### 2. We write comments when we fail to communicate using only our code.
+- <span style="color:red">**True**</span>
+- ~~False~~
+
+### 3. We should try to minimize comments as much as possible by writing better code.
+- <span style="color:red">**True**</span>
+- ~~False~~
+
+### 4. The best place to find information about the code is should be the code itself rather than comments.
+- <span style="color:red">**True**</span>
+- ~~False~~
+
+### 5. Where should we declare our variables in a function?
+- <span style="color:red">**At the top of the function.**</span>
+- ~~Only just before we use them.~~
+
+### 6. If one function calls another, they should be vertically close.
+- <span style="color:red">**True**</span>
+- ~~False~~
+
+### 7. A function that is called should be below a function that does the calling.
+- <span style="color:red">**True**</span>
+- ~~False~~
+
+### 8. What does DTO mean?
+- <span style="color:red">**Data Transfer Object**</span>
+- ~~Date Time Object~~
+
+### 9. When do we use DTOs?
+- <span style="color:red">**When working with DBs or parsing WebSocket messages.**</span>
+- ~~When publishing and transferring our code.~~
+
+### 10. Objects expose functions to operate in their data.
+- <span style="color:red">**True**</span>
+- ~~False~~
+
+
+---
 
 </br>
 </br>
