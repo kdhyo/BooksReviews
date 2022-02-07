@@ -21,6 +21,7 @@
 ### [- 22.02.05 TIL](#day-16)
 ### [- 22.02.06 TIL](#day-17)
 ### [- 22.02.07 TIL](#day-18)
+### [- 22.02.08 TIL](#day-19)
 
 
 
@@ -1064,6 +1065,56 @@ Timely(적시에)
 - "개념 당 assert 문 수를 최소로 줄여라"  
 - "테스트 함수 하나는 개념 하나만 테스트하라"
 - F.I.R.S.T. 를 생각하면서 작성하자.
+
+</br>
+</br>
+
+
+## **_Day 19_**
+## TIL(2022.02.08) 
+</br>
+
+## 😎 Chapter 7 & 9 Quiz  
+
+### 1. What is better, to throw Exceptions or return error codes?
+- ~~Error Codes~~
+- <span style="color:red">**Exceptions**</span>
+
+### 2. When should we write try/catch/finally?
+- <span style="color:red">**First, before we write any code.**</span>
+- ~~At the end, when cleaning the code.~~
+
+### 3. What kind of information should our error messages have?
+- ~~The stack trace only.~~
+- <span style="color:red">**The operation that failed, type of failure, more information about the error.**</span>
+
+### 4. Why shouldn’t we return ‘null’ from methods/functions?
+- <span style="color:red">**We might forget to check for null and can easily have null pointer exceptions.**</span>
+- ~~The code does not run.~~
+
+### 5. Is passing ‘null’ as an argument a good practice? 
+- ~~Yes~~
+- <span style="color:red">**No**</span>
+
+### 6. Having dirty tests can be worse than having no tests at all
+- <span style="color:red">**True**</span>
+- ~~False~~
+
+### 7. Test code is as important as production code.
+- <span style="color:red">**True**</span>
+- ~~False~~
+
+### 8. How many concepts should a test function test?
+- ~~Multiple~~
+- <span style="color:red">**One**</span>
+
+### 9. Should tests depend on each other
+- ~~Yes~~
+- <span style="color:red">**No**</span>
+
+### 10. What output should a test have?
+- <span style="color:red">**Boolean**</span>
+- ~~None, throw an error.~~
 
 </br>
 </br>
