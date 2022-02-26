@@ -1988,7 +1988,7 @@ String compactActual = compactString(actual);
 
 # 📘 16장 SerialDate 리팩터링
 
-## **_Day 31_**
+## **_Day 32_**
 ## TIL(2022.02.26) 
 </br>
 
