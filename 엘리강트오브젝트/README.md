@@ -106,6 +106,101 @@ class Cash {
 
 
 ## 1.3 생성자에 코드를 넣지 마세요.
+- 주 ctor은 객체 초기화 프로세스를 시작하는 유일한 장소이기 때문에 제공되는 인자들은 완전해야 합니다.  
+
+이 책의 첫 번째 목표는 OOP에 대한 사고방식과 이해의 깊이를 바꾸는 것입니다.  
+두 번째 목표는 실용적인 예제들을 제공하고 이를 통해 새로운 사고방식을 코드에 적용하는 것입니다.  
+
+진정한 객체지향에서 인스턴스화란 더 작은 객체들을 조합해서 더 큰 객체를 만드는 것을 의미합니다.  
+객체들을 조합해야 하는 단 하나의 이유는 새로운 계약을 준수하는  
+새로운 엔티티(entity)가 필요하기 때문입니다.  
+
+제일 처음 할 일은 객체를 인스턴스화하는 것입니다.  
+두 번째 할 일은 객체가 우리를 위해 작업을 하게 만드는 것입니다.  
+이 두 단계가 겹쳐서는 안됩니다.  
+ctor은 어떤 일을 수행하는 곳이 아니기 때문에 ctor 안에서 인자에게 어떤 작업을 하도록 요청해서는 안됩니다.  
+
+**첫 번재 코드**  
+```
+class StgringAsInteger implements Number {
+    private String text;
+    public StringAsInteger(String txt) {
+        this.text = txt;
+    }
+    public int intValue() {
+        return Integer.parseInt(this.text);
+    }
+}
+```
+**두 번째 코드**  
+```
+class StgringAsInteger implements Number {
+    private int num;
+    public StringAsInteger(String txt) {
+        this.num = Integer.parseInt(txt);
+    }
+    public int intValue() {
+        return this.num;
+    }
+}
+```
+첫 번째 코드는 intValue()를 호출할 때마다 매번 텍스트를 정수로 파싱합니다.  
+두 번째 코드는 초기화하는 시점에 단 한 번 텍스트를 파싱하고 있습니다.  
+실제로 두 번째 코드가 효율적으로 동작하고, 그렇게 생각할 수 있지만,  
+ctor에서 직접 파싱을 수행하는 두 번째 코드는 최적화가 불가능합니다.  
+객체를 만들 때마다 매번 파싱이 수행되기 때문에 실행 여부를 제어할 수 없습니다.  
+intValue() 를 호출할 필요가 없는 경우에도 CPU는 파싱을 위해 시간을 소모합니다.  
+
+```
+Number five = new StringAsInteger("5");
+if (/* 무언가 잘못되었다면 */) {
+    throw new Exception("어떤 문제");
+}
+five.intValue();
+```
+
+인자를 전달된 상태 그대로 캡슐화하고 나중에 요청이 있을 때 파싱하도록 하면,  
+클래스의 사용자들이 파싱 시점을 자유롭게 결정할 수 있게 됩니다.  
+
+파싱이 여러 번 수행되지 않도록 하고 싶다면 **데코레이터(decorator)**를 추가해서  
+최초의 파싱 결과를 캐싱할 수도 있습니다.  
+```
+class CachedNumber implements Number {
+    private Number origin;
+    private Collection<Integer> cached = new ArrayList<>(1);
+    public CachedNumber(Number num) {
+        this.origin = num;
+    }
+    public int intValue() {
+        if (this.cached.isEmpty()) {
+            this.cached.add(this.origin.intValue());
+        }
+        return this.cached.get(0);
+    }
+}
+```
+이 예제는 꽤나 원시적인 캐싱 구현체지만 이 코드로부터 영감을 얻기 바랍니다.  
+이제 효율적으로 실행될 필요가 있는 객체를 감싸기 위해서 캐싱 데코레이터를 사용할 수 있습니다.  
+```
+Number num = new CachedNumber(
+    new StringAsInteger("123")
+);
+num.intValue(); // 첫 번째 파싱
+num.intValue(); // 파싱하지 않음.
+```
+주 생성자에서 코드를 없애면 사용자가 쉽게 제어할 수 있는 투명한 객체를 만들 수 있으며,  
+객체를 이해하고 재사용하기도 쉬워집니다.  
+객체는 요청을 받을 때만 행동하고 그 전에는 어떤 일도 하지 않습니다.  
+이 객체들은 좋은 방식으로 매우 '게으릅니다.(lazy)'.  
+
+분명히 파싱이 단 한번만 수행되는 경우도 있습니다.  
+이런 경우에도 ctor에서 다른 일을 수행하지 않는 편이 좋은 이유는 무엇일까요?  
+수행할 수는 있겠지만, 저는 일관성(uniformity)이라는 측면에서 반대합ㄴ디ㅏ.  
+여러분은 이 클래스의 미래에 어떤 일이 일어날 지, 다음 리팩토링 시점에 얼마나 많은  
+변경이 더해질지 알 지 못합니다.  
+ctor 안에서 어떤 일을 처리하고 있다면 나중에 리팩토링하기가 훨씬 어렵습니다.  
+리팩토링을 수행하는 프로그래머는 ctor 내부의 처리 로직을 메서드로 옮기고 나서야  
+코드를 실제로 변경할 수 있겠습니다.
 
 # 2장 학습
 ## 2.1 가능하면 적게 캡슐화하세요.
