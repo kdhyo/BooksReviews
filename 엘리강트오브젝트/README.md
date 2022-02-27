@@ -1,5 +1,49 @@
 # 1장 출생
 ## 1.1 -er로 끝나는 이름을 사용하지 마세요.
+**클래스 이름을 짓는 잘못된 방식**  
+클래스의 객체들이 무엇을 하고 있는(doing)지를 살펴본 후  
+기능(functionality)에 기반해서 이름을 짓는 방식은 잘못되었습니다.
+```
+class CashFormatter {
+    private int dollars;
+    CashFormatter(int dlr) {
+        this.dollars = dls;
+    }
+    public String format() {
+        return String.format("$ %d", this.dollars);
+    }
+}
+```
+
+**클래스 이름을 짓는 올바른 방식**  
+클래스 이름은 무엇을 하는지(what he does)가 아니라 무엇인지(what he is)에 기반해야 합니다.  
+CashFormmatter라는 이름은 Cash, USDCash, CashInUSD와 같은 이름으로 바꿔야 하고,  
+메서드 format()은 usd()로 수정해야 합니다.  
+```
+class Cash {
+    private int dollars;
+    Cash(int dlr) {
+        this.dollars = dls;
+    }
+    public String usd() {
+        return String.format("$ %d", this.dollars);
+    }
+}
+```
+
+객체는 객체의 외부 세계와 내부 세계를 이어주는 연결장치(ㅑconnector)가 아닙니다.  
+객체는 내부에 캡슐화된 데이터를 다루기 위해 요청할 수 있는 절차의 집합이 아닙니다.  
+대신 객체는 캡슐화된 데이터의 대표자(representative)입니다.
+
+그는 리스트이고, 인덱스 번호를 통해 특정 위치의 요소를 선택할 수 있습니다.  
+그는 SQL 레코드이고, 임의의 셀에 저장된 정수값을 조회할 수 있습니다.  
+그는 픽셀이고, 스스로 색을 바꿀 수 있습니다.  
+그는 하나의 파일이고, 디스크에서 내용을 읽어올 수 있습니다.  
+그는 인코딩 알고리즘이고, 인코드 작업을 수행할 수 있습니다.  
+그는 HTML 문서이고, 브라우저에서 HTML을 렌더링할 수 있습니다.
+
+내가 무엇을 하는 지와 내가 누구인지는 다릅니다.
+
 ## 1.2 생성자 하나를 주 생성자로 만드세요.
 ## 1.3 생성자에 코드를 넣지 마세요.
 
