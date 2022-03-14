@@ -245,6 +245,68 @@ assert x.equals(y); // 실패
 항상 eqauls() 메서드를 오버라이드하길 바랍니다.  
 
 ## 2.2 최소한 뭔가는 캡슐화하세요.
+
+어떤 부분이 문제일까요?  
+정적 메서드가 존재하지 않고 인스턴스 생성과 실행을 엄격하게 분리하는  
+순수한 OOP에서는 기술적으로 프로퍼티가 없는 클래스를 만들 수 없기 때문입니다.  
+
+### 프로퍼티가 없는 잘못 설계된 클래스
+```
+class Year {
+    int read() {
+        return System.currentTimeMillis()
+            / (1000 * 60 * 60 * 24 * 30 * 12) - 1970;
+    }
+}
+```
+
+### 프로퍼티를 추가해 캡슐화한 클래스
+```
+class Year {
+    private Millis millis;
+    Year(Millis msec) {
+        this.millis = msec;
+    }
+    int read() {
+        return this.millis.read()
+            / (1000 * 60 * 60 * 24 * 30 * 12) - 1970; 
+    }
+}
+```
+
+### 완벽한 객체지향 설계를 적용한 모습 1
+```
+class Year {
+    private Number num;
+    Year(final Millis msec) {
+        this.num = new Min(
+            new Div(
+                msec,
+                new Mul(1000, 60, 60, 24, 30, 12)
+            ),
+            1970
+        );
+    }
+    int read() {
+        return this.num.intValue();
+    }
+}
+```
+### 완벽한 객체지향 설계를 적용한 모습 2
+```
+class Year {
+    private Number num;
+    Year(final Millis msec) {
+        this.num = msec.div(
+            1000.mul(60).mul(60).mul(24).mul(30).mul(12)
+        ).min(1970);
+    }
+    int read() {
+        return this.num.intValue();
+    }
+}
+```
+
 ## 2.3 항상 인터페이스를 사용하세요.
 ## 2.4 메서드 이름을 신중하게 선택하세요.
 ### 2.4.1 빌더는 명사다.
