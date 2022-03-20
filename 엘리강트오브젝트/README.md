@@ -317,10 +317,54 @@ class Year {
 > 인터페이스를 통해 구현체를 쉽게 바꿀 수 있도록 느슨한 결합을 하도록 해야 합니다.
 
 ## 2.4 메서드 이름을 신중하게 선택하세요.
+> 메서드의 목적이 무엇인지 확인하세요.  
+메서드는 빌더나 조정자 둘 중 하나여야 합니다.  
+결코 빌더인 동시에 조정자여서는 안됩니다.  
+빌더라면 이름을 명사로, 조정자면 이름을 동사로 지어야 합니다.  
+Boolean 값을 반호나한느 빌더는 예외에 속합니다.  
+이 경우에는 이름을 형용사로 지어야 합니다.
+
 ### 2.4.1 빌더는 명사다.
+> 빌더(Builder)란 뭔가를 만들고 새로운 객체를 반호나하는 메서드를 가리킵니다.  
+빌더는 void가 될 수 없으며, 이름은 항상 명사여야 합니다.  
+
+```
+int pow(int base, in power);
+float speed();
+Employee employee(int id);
+String parsedCell(int x, int y);
+```
+
+```
+int add(int x, int y);
+```
+대신
+```
+int sum(int x, int y);
+```
+> 객체에게 더하라고(add)요청하는 것이 아닌,  
+두 수의 합(sum)을 계산하고 새로운 객체를 반환해 달라고 요청하는 것.
+
 ### 2.4.2 조정자는 동사다.
+> 조정자(manipulator)는 반환 타입이 항상 void며, 이름은 항상 동사여야 합니다.
+
+```
+void save(String content);
+void put(String key, Float value);
+void remove(Employee emp);
+void quicklyPrint(int id);
+```
+
 ### 2.4.3 빌더와 조정자 혼합하기
 ### 2.4.4 Boolean 값을 결과로 반환하는 경우
+> 반환하기 때문에 빌더에 속하지만, 가독성 측면에서 형용사로 지어야 합니다.  
+
+```
+boolean empty(); // is empty
+boolean readable(); // is readable
+boolean negative(); // is negative
+```
+
 ## 2.5 퍼블릭 상수(public constant)를 사용하지 마세요.
 ### 2.5.1 결합도 증가
 ### 2.5.2 응집도 저하
