@@ -366,8 +366,84 @@ boolean negative(); // is negative
 ```
 
 ## 2.5 퍼블릭 상수(public constant)를 사용하지 마세요.
+> 예시 코드  
+
+```
+public class Constants {
+    public static final String EOL = "\r\n";
+}
+
+class Records {
+    void write(Writer out) {
+        for (Record rec : this.all) {
+            out.write(rec.toString());
+            out.write(Constants.EOL); // 여기!!
+        }
+    }
+}
+
+class Rows {
+    void print(PrintStream pnt) {
+        for (Row row : this.fetch()) {
+            pnt.printf(
+                "{ %s }", row, Constants.EOL // 여기!!
+            );
+        }
+    }
+}
+```
+
 ### 2.5.1 결합도 증가
+> 예제 코드 두 클래스는 모두 같은 객체에 의존하고 있으며,  
+이 의존성은 하드 코딩되어 있습니다.
+
+> Constants.EOL 을 변경하는 입장에서는 이 값이 어떻게 사용되고 있는지 알 수 없습니다.  
+어떤 곳에서는 출력 중 한 줄을 넘기기 위해서 사용하고 있을 수 있으며,
+다른 곳에서는 HTTP 프로토콜에 포함된 콘텐츠 한 줄을 종료하기 위해 사용하고 있을 수 있습니다.  
+
+> 많은 객체들이 다른 객체를 사용하는 상황에서 서로를 어떻게 사용하는지 알 수 없다면,  
+이 객체들은 매우 강하게 결합되어 있는 것입니다.
+
 ### 2.5.2 응집도 저하
+> 객체 사이에 데이터를 중복해서는 안됩니다.  
+대신 기능을 공유할 수 있도록 새로운 클래스를 만들어야 합니다.  
+다시 한 번 강조하지만, 데이터가 아니라 기능을 공유해야 합니다.
+
+예시
+```
+class EOLString {
+    private final String origin;
+    EOLString(String src) {
+        this.origin = src;
+    }
+
+    @Oberride
+    String toString() {
+        return String.format("%s\r\n", origin);
+    }
+}
+
+class Recoreds {
+    void write(Writer out) {
+        for (Record rec : this.all) {
+            out.write(new EOLString(rec.toString()));
+        }
+    }
+}
+
+class Rows {
+    void print(PrintStream pnt) {
+        for (Row row : this.fetch()) {
+            pnt.print(
+                new EOLString(
+                    String.format("{ %s }", row)
+                )
+            );
+        }
+    }
+}
+```
+
 ## 2.6 불변 객체로 만드세요.
 ### 2.6.1 식별자 가변성(Identity Mutability)
 ### 2.6.2 실패 원자성(Failure Atomicity)
