@@ -445,13 +445,86 @@ class Rows {
 ```
 
 ## 2.6 불변 객체로 만드세요.
+> 가변 객체 사용을 엄격하게 금지해야 합니다.  
+> five 객체는 생성하고나면 fifty가 될 수 없습니다.
+> 5를 세팅한 후에 50을 세팅하는 건 말이 안됩니다.
 ### 2.6.1 식별자 가변성(Identity Mutability)
+```
+Map<Cash, String> map = new HashMap<>();
+Cash five = new Cash("$5");
+Cash ten = new Cash("$10");
+map.put(five, "five");
+map.put(ten, "ten");
+five.mul(2);
+System.out.println(map); // {$10 => "five", $10 => "ten"}
+```
+> 이처럼 둘 중 하나를 검색하게 되면 어떤 결과를 얻을지 예측할 수 없습니다.  
+> 불변객체를 사용하면 위처럼 값 변경을 컴파일에서 못하도록 막아주기 때문에 불변을 쓰는 게 좋습니다.
 ### 2.6.2 실패 원자성(Failure Atomicity)
+> 가변 객체일 경우
+```
+class Cash {
+    private int dollars;
+    private int cents;
+    public void mul(int factor) {
+        this.dollars *= factor;
+        if (뭔가 잘못 됐다면) {
+            throw new RuntimeException("oops...");
+        }
+        this.cents *= factor;
+    }
+}
+```
+> 불변 객체일 경우
+```
+class Cash {
+    private final int dollars;
+    private final int cents;
+    public Cash mul(int factor) {
+        if (뭔가 잘못 됐다면) {
+            throw new RuntimeException("oops...");
+        }
+        return new Cash(
+            this.dollars * factor,
+            this.cents * factor
+        );
+    }
+}
+```
+> 이처럼 가변 객체일 경우 예외가 발생 시 기존에 변경된 건 변경이 유지되는 현상이 있지만,  
+> 불변객체일 경우 성공일 때 새로운 객체를 반환하기 때문에 이러한 문제를 막을 수 있다.  
+> 물론, 가변 객체도 막을 수는 있지만 신경을 많이 써야하며 누락할 가능성이 존재한다.
 ### 2.6.3 시간적 결합(Temporal Coupling)
+```
+Cash prive = new Cash();
+price.setDollars(29);
+System.out.println(price); // "$29.00"!
+price.setCents(95);
+```
+> 이처럼 settter 를 사용하게 되면 값 세팅이 늦게 되어 원하던 결과가 아닌 다른 결과를 얻을 수도 있다.  
+> 이러한 상황은 컴파일러가 아무런 도움을 줄 수 없습니다.  
+> 가변 객체 수가 많은 상황에서 처리하는 연산들의 순서를 일일이 기억해야 한다면  
+> 유지보수에 있어서 어려움이 크게 됩니다.
 ### 2.6.4 부수효과 제거(Side effect-free)
+> 객체 내부에 실수를 하여 side effect 가 발생하는 현상을 초반부터 잡을 수 있습니다.
 ### 2.6.5 NULL 참조 없애기
+> Null 을 처음부터 셋팅할 수 없도록 불변객체로 만드는 것이 유지보수에 훨씬 좋습니다.  
+> 무분별한 setter 로 인해 null이 들어가는 것을 방지할 수 있습니다.  
+> 불변객체로 만들게 되면 작고, 견고하고, 응집도 높은 객체를 생성할 수 밖에 없도록  
+> 강제되기 때문에 결과적으로 유지보수하기에 훨씬 쉬운 객레를 만듭니다.
 ### 2.6.6 스레드 안전성
+> 가변 객체는 스레드에 안전하지 못한 객체입니다.  
+> 우리는 멀티 쓰레드 환경인 것을 인지해야 합니다.  
+> 공유 객체인 경우 가변 객체는 스레드에 안전하지 못하며  
+> 스레드 안전을 위해 synchronized 를 사용하는 행위는 성능상 비싼 비용을 초례하고,  
+> 데드락이 발생할 수 있습니다.
 ### 2.6.7 더 작고 더 단순한 객체
+> 객체가 단순할수록 유지보수는 쉬워집니다.  
+> 최고의 소프트웨어는 이해하고, 수정하고, 문서화하고, 지원하고, 리팩토링하기 쉽습니다.  
+> 유지보수성은 현대적인 프로그래밍이 갖춰야 하는 가장 중요한 덕목입니다.  
+> 불변 객체를 아주 크게 만드는 일은 불가능하기 때문에,  
+> 일반적으로 불변 객체는 가변 객체보다 더 작습니다.  
+> 불변 객체가 작을 수 있는 이유는 생성자에서만 상태를 초기화하기 때문입니다.  
 ## 2.7 문서를 작성하는 대신 테스트를 만드세요.
 ## 2.8 모의 객체(Mock) 대신 페이크 객체(Fake)를 사용하세요.
 ## 2.9 인터페이스를 짧게 유지하고 스마트(smart)를 사용하세요.
