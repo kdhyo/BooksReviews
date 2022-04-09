@@ -555,6 +555,7 @@ price.setCents(95);
 
 ## 3.2 정적 메서드를 사용하지 마세요.
 ### 3.2.1 객체 대 컴퓨터 사고(object vs. computer thinking)
+> 정적 메서드는 절차적 사고를 갖습니다.
 ### 3.2.2 선언형 스타일 대 명령형 스타일(declarative vs. imperative style)
 ### 3.2.3 유틸리티 클래스(Utility classes)
 ### 3.2.4 싱글톤(Singleton) 패턴
