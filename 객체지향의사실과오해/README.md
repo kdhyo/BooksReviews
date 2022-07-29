@@ -1295,3 +1295,230 @@ classDiagram
 - 안정적인 도메인 모델을 기반으로 시스템의 기능을 구현하라.
 - 도메인 모델과 코드를 밀접하게 연관시키기 위해 노력하라.
 - 그것이 유지보수하기 쉽고 유연한 객체지향 시스템을 만드는 첫걸음이 될 것이다.
+
+## 07. 함께 모으기
+
+### 1. 목표
+1. 코드가 제공해야 하는 세 가지 관점 이해하기
+   - 개념 관점 (Conceptual Perspective)
+   - 명세 관점 (Specification Perspective)
+   - 구현 관점 (Implementation Perspective)  
+
+
+2. 객체지향적인 설계와 구현의 흐름 이해하기
+- 커피 주문 예제
+- 도메인모델설계 → 도메인객체간협력과메시지설계 → 인터페이스식별 → 행동구현
+
+
+### 2. 커피 주문 예제로 살펴보는 객체지향 설계 와 구현
+
+> 요구사항: 커피 전문점에서 커피를 주문하기  
+
+1. 도메인 모델 정의하기
+- 6장) 안정적인 구조 → 변경과 확장에 유연한 설계
+- 소프트웨어가 대상으로 하는 영역인 도메인을 단순화해서 표현한 모델
+- 커피 제조와 관련된 객체들을 타입과 관계를 이용해 추상화한 모델  
+
+
+#### 1) 객체 파악, 타입 정의  
+커피 전문점 세상을 구성하는 객체들은 무엇이 있을까?
+
+![커피주문](https://user-images.githubusercontent.com/60608509/181679417-cb36b160-3b1d-42ac-aace-f7762308468c.png)
+       
+- 손님은 원하는 커피를 선택하고 주문한다.
+- 메뉴판에서 주문할 수 있는 커피들을 볼 수 있다.
+  - 메뉴 아이템: 아메리카노, 카푸치노, 카라멜 마끼아또, 에스프레소
+- 바리스타는 커피를 제조한다.  
+
+
+> 객체 지향의 관점에서 커피 전문점이라는 도메인은 손님 객체, 메뉴 항목 객체, 메뉴판 객체, 바리스타 객 체, 커피 객체로 구성된 작은 세상이다.  
+
+
+#### 객체와 타입?
+
+타입
+- 동적인 객체를 정적인 타입으로 추상화하여 복잡성을 낮춘다.
+- 타입은 분류를 위해 사용된다. 객체 지향 프로그래밍 언어를 이용해 타입을 구현하는 가장 보편적 인 방법은 클래스를 이용하는 것이다. 클래스 외에도 인스턴스를 생성할 수 없는 추상 클래스나 인 터페이스를 이용해 구현할 수 있다.
+- 상태와 무관하게 동일하게 행동할 수 있는 객체들은 동일한 타입의 인스턴스로 분류할 수 있다.
+  - DI, Collection 등
+- 손님 객체 == 손님 타입의 인스턴스
+ 
+#### 1) 객체 타입간 관계 정의
+- 메뉴판에는 네 가지 메뉴 항목이 포함되어 있다.
+- 손님은 1) 메뉴판을 보고 주문할 커피를 선택하여 2) 바리스타에게 원하는 커피를 주문한다.
+- 바리스타는 1) 손님에게서 주문을 받은 메뉴에 따라 2)적절한 커피를 제조한다.
+- 도메인 모델 보기
+
+![도메인모델](https://user-images.githubusercontent.com/60608509/181679401-c2fdd59c-a7c4-4cb3-9e52-54753b0d6bf3.png)
+
+### 2. 협력과 메시지를 설계 → 적절한 도메인 객체에게 책임을 할당
+- 객체지향 설계의 첫 번째 목표는 훌륭한 객체 설계가 아닌, 훌륭한 협력을 설계하는 것!
+- 객체간 협력에 따른 메시지를 먼저 선택하고, 그 후 메시지를 수신하기에 적절한 객체를 앞서 만든 도메인 객체에서 선택한다.
+
+![협력관계](https://user-images.githubusercontent.com/60608509/181680146-894d86f2-d643-4c1f-adea-bd07f6089150.png)  
+
+#### cf. 손님과 메뉴판
+- 객체 지향에서는 모든 객체가 자율적이고 능동적인 존재이다.
+- 현실 세계에서는 무생물일지라도, 객체 지향에서는 의인화 되어 각 책임을 수행한다.
+
+   - → 메뉴 항목(상태)을 가장 잘 알고 있는 객체인 메뉴판에게 메뉴 항목을 찾으라는 책임을 전달한다.
+   - → 손님은 메뉴판에게 ‘메뉴 항목을 찾으라는 메시지를 요청’할 뿐이다.
+- 소프트웨어 세계는 현실 세계를 모방하거나 추상화한 것이 아닌 은유할 뿐이다.
+
+
+### 3. 인터페이스 식별
+- 객체가 수신할 메시지를 정제하고 각 객체가 외부에 제공할 인터페이스를 정의한다.
+  - 타입과 인터페이스? 인터페이스와 메서드? p.164~165 -
+    - (공용) 인터페이스: 외부로 제공하는 행위의 집합. 객체가 수신할 수 있는 메시지의 목록.  
+      - 메시지를 받을 수 있는 창구, 버튼
+    - 각각의 행위가 오퍼레이션
+  - 제공하는 클래스의 인터페이스는 자바 문법을 이용해 나타냄 인터페이스에 포함된 오퍼레이션
+을 외부에서 접근 가능하도록 공용으로 선언돼 있어야 한다.
+    - public 접근 제어자 사용
+
+```
+class Customer {
+    public void order(String menuName) {}
+}
+class Menu {
+    public MenuItem choose(String name) {}
+}
+class MenuItem {
+}
+class Barista {
+    public Coffee makeCoffee(MenuItem menuItem) {}
+}
+class Coffee {
+    public Coffee(MenuItem menuItem) {}
+}
+```
+### 4. 구현하기
+> 오퍼레이션(행동)을 수행하는 방법을 메서드로 구현한다.
+
+
+```
+class Customer {
+    public void order(String menuName, Menu menu, Barista barista) {
+} }
+MenuItem menuItem = menu.choose(menuName);
+Coffee coffee = barista.makeCoffee(menuItem);
+...
+```
+- 구현 과정에서 인터페이스의 변경이 이루어질 수 있음
+  - 메시지를 전송하기 위해 수신할 객체의 참조를 알고 있어야 한다.
+  - 협력을 구상하고 설계를 하는데 많은 시간을 쏟지 말고, 코드를 통한 피드백을 지향하자!
+
+```
+class Menu {
+    private List<MenuItem> items;
+    public Menu(List<MenuItem> items) {
+        this.items = items;
+    }
+
+    public MenuItem choose(String name) {
+        for(MenuItem each : items) {
+            if (each.getName().equals(name)) {
+                return each;
+            }
+        }
+    }
+}
+```
+- 메뉴를 구성하고 있는 메뉴 항목을 메뉴의 속성으로 포함시킨 결정은 클래스를 구현하면서 하였다.
+- 객체의 속성은 객체 내부 구현에 속하기 때문에 캡슐화 되어야 한다.
+- 인터페이스를 결정할 때는 가급적 객체 내부의 구현에 대한 어떤 가정도 하지 말아야 한다. 즉, 객체 가 어떤 속성을 가지는지, 그 속성이 어떤 자료 구조로 구현되었는지를 고려하지 않는다.
+
+```
+class Barista {
+    public Coffee makeCoffee(MenuItem menuItem) {
+        Coffee coffee = new Coffee(menuItem);
+        return coffee;
+    }
+}
+class Coffee {
+    private String name;
+    private int price;
+    public Coffee(MenuItem menuItem) {
+        this.name = menuItem.getName();
+        this.price = menuItem.cost();
+    }
+}
+class MenuItem {
+    private String name;
+    private int price;
+ 
+    public MenuItem(String name, int price) {
+            this.name = name;
+            this.price = price;
+    }
+    public int cost() {
+        return price;
+    }
+    public String getName() {
+        return name;
+    }
+}
+```
+
+![다이어그램](https://user-images.githubusercontent.com/60608509/181679415-44cc0ad7-ee6e-4309-8f00-b740205ee1d5.png)  
+
+
+### 중요한 것
+
+- 메시지가 책임을 수행할 객체를 결정
+- 인터페이스와 구현의 분리
+
+
+### 3. 코드의 세 가지 관점
+> 코드는 세 가지 관점을 모두 제공해야 한다.  
+
+
+1. 개념 관점
+- 도메인을 구성하는 중요한 개념과 관계를 반영
+  - customer, menu, menuItem, barista, coffee
+- 클래스가 도메인 개념의 특성을 최대한 수용하면 변경을 관리하기 쉽고 유지보수성을 향상시킬 수 있다.
+  - 변경이 필요할 때, 기능을 변경하기 위해 수정해야 할 클래스와 코드가 제한적이게 된다.
+    - → SRP(단일책임원칙) : 하나의 클래스가 변경되어야 하는 사유는 한가지여야 한다.
+  
+2. 명세 관점
+- 클래스의 인터페이스를 바라보는 관점
+- 클래스의 public 메서드는 다른 클래스가 협력할 수 있는 공용 인터페이스를 드러낸다.
+  - 공용 인터페이스는 외부의 객체가 해당 객체에 접근할 수 있는 유일한 부분이다.
+  - 최대한 변화에 안정적인 인터페이스를 만들기 위해서는 인터페이스를 통해 구현과 관련된 세 부사항이 드러나지 않게 해야 한다.  
+  
+3. 구현 관점
+- 클래스의 내부 구현을 바라보는 관점
+- 클래스의 메서드와 속성은 구현에 속하며 공용 인터페이스의 일부가 아니다.
+- 메서드와 속성은 철저하게 클래스 내부로 캡슐화되어야 한다.
+- 메서드의 구현과 속성의 변경은 외부의 객체에게 영향을 미쳐서는 안 된다.
+ 
+4. 결론
+세 가지 관점을 모두 포함하면서도 각 관점에 대응되는 요소를 명확하고 깔끔하게 드러내라. 이는 변경
+에 유연하게 대응할 수 있는 객체지향 코드를 작성하는 가장 빠른 길이다.  
+
+### 3. 도메인과 인터페이스
+
+#### 도메인 개념을 참조하는 이유
+- 6장 참고
+
+
+> 어떤 메시지가 있을 때 그 메시지를 수신할 객체를 선택하는 방법 중 하나는 도메인 개념 중에서 가장 적 절한 것을 선택하는 것이다. 이는 도메인에 대한 지식을 기반으로 코드의 구조와 의미를 쉽게 유추할 수 있기 때문에 유지보수성을 향상시킨다. 즉, 변화에 쉽게 대응할 수 있다.  
+
+
+#### 인터페이스와 구현을 분리하라
+> 명세 관점은 클래스의 안정적인 측면을 드러내야 한다. 구현 관점은 클래스의 불안정한 측면을 드러내야 한다. 이 두 가지 관점을 분리하는것은 매우 중요하다. 캡슐화를 위반해서 구현을 인터페이스 밖으로 노 출해서도 안 되고, 인터페이스와 구현을 명확하게 분리하지 않고 흐릿하게 섞어놓아서도 안된다.  
+
+
+- 마틴 파울러 UML Distilled)
+> 객체 지향 분석 및 설계, UML, 패턴, 애자일 소프트웨어 개발 방법론을 전문으로 하고 있다.  
+
+> Specification. Now we are looking at software, but we are looking at the interfaces of the software, not the implementation. Object-oriented development puts a great emphasis on the difference between interface and implementation, but this is often over-looked in practice because the notion of class in an OO language combines both interface and implementation.  
+
+> You often hear the word "type" used to talk about an interface of a class; a type can have many classes that implement it, and a class can implement many types.  
+
+
+우리가 소프트웨어를 바라볼 때, 구현보다 인터페이스에 집중해야 한다.  
+명세 관점과 구현 관점을 분리하는 것은 매우 중요하다.  
+하지만, 객체지향 언어는 인터페이스와 구현 관점을 통합하여 보여 주기 때문에 이렇게 하기가 쉽지 않을 수 있다.  
+클래스의 인터페이스에 대해 이야기할 때, “타입”에 대해 들어봤을 것이다.  
+타입은 구현 가능한 많 은 클래스를 가질 수 있고, 그리고 클래스는 많은 타입을 구현할 수 있다.
