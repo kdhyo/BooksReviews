@@ -72,9 +72,11 @@ val user = User("Maja", "Markiewicz")
 user = user.copy(surname = "Moskala")
 print(user) // User(name=Maja, surname=Moskala)
 ```
+
 </br>
 
 #### 변경 가능 지점 노출하지 말기
+
 </br>
 
 아래 코드는 mutable 객체를 외부로 노출해서 다른 곳에서 쉽게 변경할 수 있는 코드가 됩니다.
@@ -90,6 +92,7 @@ class UserRepository {
     }
 }
 ```
+
 </br>
 
 컬렉션은 객체를 읽기 전용 슈퍼타입으로 업캐스트하여 가변성을 제한하는 게 좋습니다.
@@ -119,3 +122,113 @@ class UserRepository {
 이러한 최적화는 코드에서 성능이 중요한 부분에서만 사용하는 것이 좋습니다.  
 추가로 immutable 객체를 사용할 때는 언제나 멀티스레드 때에 더 많은 주의를 기울여야 한다는 것을 기억하세요.  
 그래도 일단 immutable 객체와 mutable 객체를 구분하는 기준은 가변성입니다.
+
+</br>
+
+## ITEM 02. 변수의 스코프를 최소화하라.
+
+- 지역변수를 사용하자.
+- 최대한 좁은 스코프를 갖게 변수를 사용하자.
+
+```kotlin
+// 좋은 예시들
+
+for ((i, user) in users.withIndex()) {
+    print("User at $i is $user")
+}
+
+val user: User = if (hasValue) {
+    getValue()
+} else {
+    User()
+}
+
+fun updateWeather(degrees: Int) {
+    val (description, color) = when {
+        degrees < 5 -> "cold" to Color.BLUE
+        degrees < 23 -> "mild" to Color.YELLOW
+        else -> "hot" to Color.RED
+    }
+    // ...
+}
+```
+</br>
+
+> 스코프를 좁게 만드는 가장 중요한 이유는, 프로그램을 추적하고 관리하기 쉽기 때문이다.
+
+#### 정리  
+
+> 여러가지 이유로 변수의 스코프는 좁게 만들어서 활용하는 것이 좋습니다.  
+> 또한 var보다는 val를 사용하는 것이 좋습니다. 람다에서 변수를 캡처한다는 것을 꼭 기억하세요.
+
+</br>
+
+## ITEM 03. 최대한 플랫폼 타임을 사용하지 말라
+
+> 자바 코드를 수정할 수 있으면, @NotNull, @Nullable과 같은 어노테이션을 붙여서 타입을 명확하게 해주자.
+
+</br>
+
+#### 정리
+
+> 다른 프로그래밍 언어에서 와서 nullable 여부를 알 수 없는 타입을 플랫폼 타입이라고 부른다.  
+> 이러한 플랫폼 타입을 사용하는 코트는 해당 부분만 위험할 뿐만 아니라, 이를 활용하는 곳까지 영향을 줄 수 있는 위험한 코드다.  
+> 따라서 이런 코드를 사용하고 있다면 빨리 해당 코드를 제거하는 것이 좋다.  
+> 또한 연결되어 있는 자바 생성자, 메서드, 필드에 nullable 여부를 지정하는 어노테이션을 활용하는 것도 좋다.  
+> 이러한 정보는 코틀린 개발자 뿐만 아니라 자바 개발자에게도 유용한 정보다.
+
+</br>
+
+## ITEM 04. inferred(추론)타입으로 리턴하지 말라
+
+```kotlin
+open class Animal
+class Zebra: Animal()
+
+fun main() {
+    var animal = Zebra()
+    animal = Animal() // 오루 Type mismatch
+}
+```
+
+</br>
+
+> 할당 시 inferred 타입은 오른쪽 피연산자에 맞게 설정된다. 절대 슈퍼클래스 or 인터페이스로는 설정되지 않는다
+
+</br>
+
+#### 정리
+
+> 타입을 확실하게 지정해야 하는 경우에는 명시적으로 타입을 지정해야 한다는 원칙만 갖고 있으면 된다.  
+> 이는 굉장히 중요한 정보이므로, 숨기지 않는 것이 좋다.  
+> 또한 안전을 위해 외부 API를 만들 때는 반드시 타입을 지정하고, 이렇게 지정한 타입을 특별한 이유와 확실한 확인 없이는 제거하지 말아라.  
+> inferred 타입은 프로젝트가 진전될 때, 제한이 너무 많아지거나 예측하지 못한 결과를 낼 수 있다는 것을 기억하라!!
+
+</br>
+
+## ITEM 05. 예외를 활용해 코드에 제한을 걸아라
+
+```kotlin
+open class Animal
+class Zebra: Animal()
+
+fun main() {
+    var animal = Zebra()
+    animal = Animal() // 오루 Type mismatch
+}
+```
+
+</br>
+
+> 할당 시 inferred 타입은 오른쪽 피연산자에 맞게 설정된다. 절대 슈퍼클래스 or 인터페이스로는 설정되지 않는다
+
+</br>
+
+#### 정리
+
+> 타입을 확실하게 지정해야 하는 경우에는 명시적으로 타입을 지정해야 한다는 원칙만 갖고 있으면 된다.  
+> 이는 굉장히 중요한 정보이므로, 숨기지 않는 것이 좋다.  
+> 또한 안전을 위해 외부 API를 만들 때는 반드시 타입을 지정하고, 이렇게 지정한 타입을 특별한 이유와 확실한 확인 없이는 제거하지 말아라.  
+> inferred 타입은 프로젝트가 진전될 때, 제한이 너무 많아지거나 예측하지 못한 결과를 낼 수 있다는 것을 기억하라!!
+
+</br>
