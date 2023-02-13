@@ -208,27 +208,180 @@ fun main() {
 
 ## ITEM 05. 예외를 활용해 코드에 제한을 걸아라
 
-```kotlin
-open class Animal
-class Zebra: Animal()
+- require(): 아규먼트를 제한할 수 있습니다.  
+- check(): 상태와 관련된 동작을 제한할 수 있습니다.  
+- assert(): 어떤 것이 true인지 확인할 수 있습니다. 단, 테스트모드에서만 동작합니다.  
+- return 또는 throw와 홤께 활용하는 Elvis 연산자
 
-fun main() {
-    var animal = Zebra()
-    animal = Animal() // 오루 Type mismatch
+스마트 캐스팅 예시  
+```kotlin
+fun changeDress(person: Person) {
+    require(person.outfit is Dress)
+    val dress: Dress = person.outfit
+}
+
+class Person (val email: String?)
+fun sendEmail(person: Person, message: String) {
+    require(person.email != null)
+    val email: String = person.email
+}
+
+fun sendEmail(val email: String) {
+    val email = requireNotNull(person.email)
+    ...
+}
+
+fun sendEmail(person: Person, text: String) {
+    val email: String = person.email ?: return
 }
 ```
 
-</br>
-
-> 할당 시 inferred 타입은 오른쪽 피연산자에 맞게 설정된다. 절대 슈퍼클래스 or 인터페이스로는 설정되지 않는다
+개인적으로 assert()는 실제코드에 테스트코드가 섞여있는 모습이라, 좋은 코드로 보이진 않는다.  
+특별히 사용해야되는 순간이 오지 않는 이상 사용하지 않을 것 같다. 
+나머지 다른 것들은 상황에 맞게 잘 활용하면 좋은 코드가 나올 것 같다.
 
 </br>
 
 #### 정리
 
-> 타입을 확실하게 지정해야 하는 경우에는 명시적으로 타입을 지정해야 한다는 원칙만 갖고 있으면 된다.  
-> 이는 굉장히 중요한 정보이므로, 숨기지 않는 것이 좋다.  
-> 또한 안전을 위해 외부 API를 만들 때는 반드시 타입을 지정하고, 이렇게 지정한 타입을 특별한 이유와 확실한 확인 없이는 제거하지 말아라.  
-> inferred 타입은 프로젝트가 진전될 때, 제한이 너무 많아지거나 예측하지 못한 결과를 낼 수 있다는 것을 기억하라!!
+이번 절에서 활용한 내용을 기반으로, 다음과 같은 이득을 얻을 수 있어야 한다.
+- 제한을 훨씬 더 쉽게 확인할 수 있다.
+- 애플리케이션을 더 안정적으로 지킬 수 있다.
+- 코드를 잘못 쓰는 상황을 막을 수 있다.
+- 스마트 캐스팅을 활용할 수 있다.
+  
+이를 위해 활용했던 메커니즘을 정리하면 다음과 같다.  
+- require(): 아규먼트와 관련된 예측을 정의할 때 사용하는 범용적인 방법
+- check(): 상태와 관련된 예측을 정의할 때 사용하는 범용적인 방법
+- assert(): 테스트 모드에서 테스트를 할 때 사용하는 범용적인 방법 
+- return 또는 throw와 홤께 활용하는 Elvis 연산자
 
 </br>
+
+## ITEM 06. 사용자 정의 오류보다는 표준 오류를 사용하라.
+
+동의.  
+표준 Exception을 사용하게 되면, 다른 사람이 Exception의 종류, 원인을 쉽게 파악할 수 있게 된다.
+
+## ITEM 07. 결과 부족이 발생할 경우 null과 Failure를 사용하라.
+
+예외를 정보를 전달하는 방법으로 사용해서는 안 됩니다.  
+예외는 잘못된 특별한 상황을 나타내야 하며, 처리되어야 합니다.  
+예외는 예외적인 상황이 발생했을 때 사용하는 것이 좋습니다.  
+
+이유.
+- 많은 개발자가 예외가 전파되는 과정을 제대로 추적하지 못합니다.
+- 코틀린의 모든 예외는 unchecked예외입니다. 따라서 사용자가 예외를 처리하지 않을 수도 있으며, 이와 관련된 내용은 문서에도 제대로 드러나지 않습니다. 실제로 API를 사용할 때 예외와 관련된 사항을 단순하게 메서드 등을 사용하면서 파악하기 힘듭니다.
+- 예외는 예외적인 상황을 처리하기 위해서 만들어졌으므로 명시적인 테스트만큼 빠르게 동작하지 않습니다.
+- try-catch 블록 내부에 코드를 배치하면, 컴파일러가 할 수 있는 최적화가 제한됩니다.
+
+null과 Failure는 예상되는 오류를 표현할 때 굉장히 좋습니다.
+```kotlin
+inline fun <reified T> String.readObjectOrNull(): T? {
+    //...
+    if (incorrectSign) {
+        return null
+    }
+    ///
+    return result
+}
+
+inline fun <reified T> String.readObject(): Result<T> {
+    //...
+    if (incorrectSign) {
+        return Failure(JsonParsingException())
+    }
+    ///
+    return Success(result)
+}
+
+sealed class Result<out T>
+class Success<out T>(val result: T): Result<T>()
+class Failure(val throwable: Throwable): Result<Nothing>()
+
+class JsonParsingException: Exception()
+```
+
+null 처리 시
+```kotlin
+val age = userText.readObjectOrNull<Person>()?.age ?: -1
+```
+
+Result와 같은 공용체를 처리할 때
+```kotlin
+val person = userText.readObject<Person>()
+val age = when(person) {
+    is Success -> person.age
+    is Failure -> -1
+}
+```
+
+#### 정리
+- try-catch 블록보다 효율적이고, 사용하기 쉽고, 명확하다.
+- 예외는 놓칠 수 있고, 전체 애플리케이션을 중지시킬 수도 있다.
+- 추가적인 정보를 전달하려면 sealed result
+- 그렇지 않다면 Null
+
+## ITEM 08. 적절하게 null을 처리하라.
+
+기본적으로 nullable 타입을 처리하는 방법
+- ?., 스마트캐스팅, Elvis 연산자 등을 활용해서 안전하게 처리한다.
+- 오류를 throw 한다.
+- 함수 또는 프로퍼티를 리팩터링해서 nullable 타입이 나오지 않게 바꾼다.  
+  
+#### 정리
+- not-null assertion(!!)은 간단하지만 위험하다.
+- 지금은 Null이 아니라고 생각할 수 있지만, 리팩토링 후 null이 될 수 있다. (미래에 충분히)
+- nullability는 어떻게든 적절하게 처리해야 하므로, 추가비용이 발생한다.
+  - 필요한 경우가 아니라면 Nullability를 피해라.
+  - lateinit 프로퍼티와 NotNull 델리게이트를 활용해라.
+
+## ITEM 09. use를 사용하여 리소스를 닫아라.
+
+명시적으로 close 메서드를 호출해야 하는 자바 표준 라이브러리들이 있다.
+- InputStream, OutputStream
+- java.sql.Connection
+- java.io.Reader(FileReader, BufferedReader, CSSParser)
+- java.new.Socket, java.util.Scanner
+
+전통적으로 try-finally 블록을 해서 닫았다.  
+하지만, 이러한 방법은 filnally 블록에서 에러가 발생할 수도 있는데, 그 에러를 또 따로 처리하진 않는다.  
+다음과 같이 use를 사용하자.
+```kotlin
+fun countCharactersInFile(path: String): Int {
+    val reader = BufferedReader(FileReader(path))
+    reader.use {
+        return reader.lineSequence().sumBy { it.length }
+    }
+}
+```
+
+자바에서도 try-with-resources 방식으로 처리할 수 있다.
+
+## ITEM 10. 단위 테스트를 만들어라.
+
+단위 테스트는 일반적으로 다음과 같은 내용을 확인한다.
+- 일반적인 use case(이를 happy path라고도 부른대): 요소가 사용될 거라고 예상되는 일반적인 방법을 테스트합니다. 예를 들어 앞의 코드처럼 함수로 간단한 숫자 몇 개를 테스트합니다.
+- 일반적인 오류 케이스와 잠재적인 문제: 제대로 동작하지 않을 거라고 예상되는 일반적인 부분, 과거에 문제가 발생했던 부분 등을 테스트합니다.
+- 엣지 케이스와 잘못된 아규먼트: Int의 경우 Int.MAX_VALUE를 사용하는 경우, nullable의 경우 'null' 또는 'null 값으로 채워진 객체'를 사용하는 경우를 의미합니다. 또한 피보나치 수는 양의 정수로만 구할 수 있습니다. 음의 정수 등을 넣으면 아규먼트 자체가 잘못된 것입니다. 이러한 경우를 테스트할 수 있습니다.
+
+</br>
+
+### 단위 테스트의 장점
+- 테스트가 잘 된 요소는 신뢰할 수 있습니다. 요소를 신뢰할 수 있으므로 요소를 활용한 작업에 자신감이 생깁니다.
+- 테스트가 잘 만들어져 있다면, 리팩터링하는 것이 두렵지 않습니다. 테스트가 있으므로, 리팩터링했을 때 버그가 생기는 지 쉽게 확인할 수 있습니다. 따라서 테스트를 잘 만든 프로그램은 코드가 점점 발전합니다. 반면 테스트가 없으면 실수로 오류를 일으킬 수도 있다는 생각에 레거시 코드(기존의 코드)를 수정하려고 만지는 것을 두려워하게 됩니다.
+- 수동으로 테스트하는 것보다 단위 테스트로 확인하는 것이 빠릅니다. 빠른 속도의 피드백 루프(코드를 작성하고 테스트하고를 반복하는 것)가 만들어지므로, 개발의 전체적인 속도가 빨라지고 재미있습니다. 또한 버그를 빨리 찾을 수 있으므로 버그를 수정하는 비용도 줄어듭니다.
+
+### 단위 테스트의 단점
+- 시간이 오래 걸린다. 다만 장기적으로 좋은 단위 테스트는 '디버깅 시간', '버그를 찾는 데 드는 시간'을 줄여 줍니다. 또한 단위 테스트가 수동 테스트보다 훨씬 빠르므로 시간이 절약됩니다.
+- 테스트를 활용할 수 있게 코드를 조정해야 합니다. 변경하기 어렵기는 하지만, 이러한 변경을 통해서 훌륳아고 잘 정립된 아키텍처를 사용하는 것이 강제됩니다.
+- 좋은 단위 테스트를 만드는 작업이 꽤 어렵습니다. 남은 개발 과정에 대한 확실한 이해가 필요합니다. 잘못 만들어진 단위 테스트는 득보다 실이 큽니다. 단위 테스트를 제대로 하려면, 단위 테스트를 하는 방법을 배워야 합니다. 소프트웨어 테스팅 또는 테스트 주도 개발과 관련된 내용을 이해해야 합니다.
+
+숙련된 코틀린 개발자가 되려면, 단위 테스트와 관련된 기술을 습득하고, 중요한 코드라고 할 수 있는 다음과 같은 부분에 대해 단위 테스트하는 방법을 알고 있어야 합니다.
+- 복잡한 부분
+- 계속해서 수정이 일어나고 리팩터링이 일어날 수 있는 부분
+- 비즈니스 로직 부분
+- 공용 API 부분
+- 문제가 자주 발생하는 부분
+- 수정해야 하는 프로덕션 버그
+
